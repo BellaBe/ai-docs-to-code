@@ -24,25 +24,37 @@ st.write("This app generates code solutions based on the user question and docum
 
 st.sidebar.title("Settings")
 
+# Cache the API key and LLM name
+@st.cache_data
+def get_cached_api_key():
+    return st.session_state.get("api_key")
+
+@st.cache_data
+def get_cached_llm_name():
+    return st.session_state.get("llm_name")
+
+# Cache the LLM initialization
 @st.cache_resource
 def initialize_app(api_key, llm_name):
     return load_LLM(api_key, llm_name)
 
+# Initialize session state variables
 if "llm_name" not in st.session_state:
-    st.session_state.llm_name = None
+    st.session_state.llm_name = get_cached_llm_name() or None
 
 if "api_key" not in st.session_state:
-    st.session_state.api_key = None
+    st.session_state.api_key = get_cached_api_key() or None
 
 if "llm" not in st.session_state:
     st.session_state.llm = None
 
 if "docs_ingested" not in st.session_state:
     st.session_state.docs_ingested = False
-    
+
 if "spinner_disabled" not in st.session_state:
     st.session_state.spinner_disabled = False
 
+# Sidebar inputs
 llm_name_input = st.sidebar.selectbox(
     "Select LLM provider and model type",
     ["OpenAI GPT-3.5 Turbo", "Groq LLaMA3 70b", "Groq Mixtral 8x7b"],
@@ -56,9 +68,13 @@ api_key_input = st.sidebar.text_input(
 # Update session state with inputs
 if api_key_input:
     st.session_state.api_key = api_key_input
+    get_cached_api_key.cache_clear()  # Clear the cache when API key changes
+    get_cached_api_key()
 
 if llm_name_input:
     st.session_state.llm_name = llm_name_input
+    get_cached_llm_name.cache_clear()  # Clear the cache when LLM name changes
+    get_cached_llm_name()
 
 def handle_ingest():
     docs_url = st.session_state.docs_url
@@ -128,13 +144,15 @@ if st.session_state.llm:
                 web_search=False
             )
             
-            solution = app.invoke(state)
-
-            with st.spinner("Generating code..."):
-                time.sleep(5)
-            st.write(solution["generation"].prefix)
-            imports = solution["generation"].imports
-            code = solution["generation"].code
-            st.code(code, language="python")
+            try:
+                solution = app.invoke(state)
+                with st.spinner("Generating code..."):
+                    time.sleep(5)
+                st.write(solution["generation"].prefix)
+                imports = solution["generation"].imports
+                code = solution["generation"].code
+                st.code(code, language="python")
+            except Exception as e:
+                st.error(f"Failed to generate code. Error: {e}")
 else:
     st.warning("Please initialize the app with the selected LLM and API Key.")

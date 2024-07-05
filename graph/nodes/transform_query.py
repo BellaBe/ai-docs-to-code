@@ -2,6 +2,10 @@ from typing import Any, Dict
 from graph.entities import GraphState
 from graph.chains.question_rewriter import QuestionRewriterChain
 
+__import__('pysqlite3')
+import sys
+sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
+
 
 def transform_query(state: GraphState):
     """

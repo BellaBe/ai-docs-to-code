@@ -17,8 +17,10 @@ def retrieve(state: GraphState) -> Dict[str, Any]:
     print("<---RETRIEVE---")
     
     question = state["improved_question"]
+    llm_name = state["llm_name"]
+    api_key = state["api_key"]
   
-    retriever = get_retriever()
+    retriever = get_retriever(api_key, llm_name)
 
     documents = retriever.invoke(question)
     

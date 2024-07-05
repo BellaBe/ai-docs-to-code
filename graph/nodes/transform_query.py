@@ -1,6 +1,6 @@
 from typing import Any, Dict
 from graph.entities import GraphState
-from graph.chains.question_rewriter import question_rewriter
+from graph.chains.question_rewriter import QuestionRewriterChain
 
 
 def transform_query(state: GraphState):
@@ -17,7 +17,14 @@ def transform_query(state: GraphState):
     
     question = state["question"]
     field_of_expertise = state["field_of_expertise"]
+    
+    api_key = state["api_key"]
+    llm_name = state["llm_name"]
+    
+    question_rewriter = QuestionRewriterChain(api_key, llm_name)
+    
     result = question_rewriter.invoke({"question": question, "field_of_expertise": field_of_expertise})
+    
     
     print("Improved Question: ", result)
     

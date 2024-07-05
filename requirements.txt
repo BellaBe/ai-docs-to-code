@@ -1,5 +1,5 @@
 python-dotenv
-langchain
+langchain==0.2.6
 langchain-core
 langchain-community
 langchain-openai

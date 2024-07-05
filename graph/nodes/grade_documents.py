@@ -1,7 +1,7 @@
 from typing import Any, Dict
 
 from graph.entities import GraphState
-from graph.chains.retrieval_grader import retrieval_grader
+from graph.chains.retrieval_grader import RetrievalGraderChain
 
 def grade_documents(state: GraphState) -> Dict[str, Any]:
     """
@@ -19,9 +19,13 @@ def grade_documents(state: GraphState) -> Dict[str, Any]:
     question = state["improved_question"]
     documents = state["context"]
     field_of_expertise = state["field_of_expertise"]
+    api_key = state["api_key"]
+    llm_name = state["llm_name"]
     
     filtered_docs = []
     web_search = False
+    
+    retrieval_grader = RetrievalGraderChain(api_key, llm_name)
     
     for d in documents:
         score = retrieval_grader.invoke({

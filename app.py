@@ -1,3 +1,8 @@
+__import__('pysqlite3')
+import sys
+sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
+
+
 import streamlit as st
 import os
 import time
@@ -6,10 +11,6 @@ from graph.graph import app
 from graph.ingestion import ingest_docs
 from graph.utils import load_LLM
 from graph.entities import GraphState
-
-__import__('pysqlite3')
-import sys
-sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
 
 base_dir = os.path.dirname(os.path.abspath(__file__))
 

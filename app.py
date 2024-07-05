@@ -24,15 +24,6 @@ st.write("This app generates code solutions based on the user question and docum
 
 st.sidebar.title("Settings")
 
-# Cache the API key and LLM name
-@st.cache_data
-def get_cached_api_key():
-    return st.session_state.get("api_key")
-
-@st.cache_data
-def get_cached_llm_name():
-    return st.session_state.get("llm_name")
-
 # Cache the LLM initialization
 @st.cache_resource
 def initialize_app(api_key, llm_name):
@@ -40,10 +31,10 @@ def initialize_app(api_key, llm_name):
 
 # Initialize session state variables
 if "llm_name" not in st.session_state:
-    st.session_state.llm_name = get_cached_llm_name() or None
+    st.session_state.llm_name = None
 
 if "api_key" not in st.session_state:
-    st.session_state.api_key = get_cached_api_key() or None
+    st.session_state.api_key = None
 
 if "llm" not in st.session_state:
     st.session_state.llm = None
@@ -68,13 +59,9 @@ api_key_input = st.sidebar.text_input(
 # Update session state with inputs
 if api_key_input:
     st.session_state.api_key = api_key_input
-    get_cached_api_key.cache_clear()  # Clear the cache when API key changes
-    get_cached_api_key()
 
 if llm_name_input:
     st.session_state.llm_name = llm_name_input
-    get_cached_llm_name.cache_clear()  # Clear the cache when LLM name changes
-    get_cached_llm_name()
 
 def handle_ingest():
     docs_url = st.session_state.docs_url

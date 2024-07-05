@@ -2,7 +2,6 @@ __import__('pysqlite3')
 import sys
 sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
 
-
 import streamlit as st
 import os
 import time
@@ -25,6 +24,7 @@ st.write("This app generates code solutions based on the user question and docum
 
 st.sidebar.title("Settings")
 
+@st.cache_resource
 def initialize_app(api_key, llm_name):
     return load_LLM(api_key, llm_name)
 
@@ -43,15 +43,22 @@ if "docs_ingested" not in st.session_state:
 if "spinner_disabled" not in st.session_state:
     st.session_state.spinner_disabled = False
 
-st.session_state.llm_name = st.sidebar.selectbox(
+llm_name_input = st.sidebar.selectbox(
     "Select LLM provider and model type",
     ["OpenAI GPT-3.5 Turbo", "Groq LLaMA3 70b", "Groq Mixtral 8x7b"],
     key="llm_name_input"
 )
 
-st.session_state.api_key = st.sidebar.text_input(
+api_key_input = st.sidebar.text_input(
     "API Key", type="password", placeholder="Ex: sk-2t... or gsk_mc12...", key="api_key_input"
 )
+
+# Update session state with inputs
+if api_key_input:
+    st.session_state.api_key = api_key_input
+
+if llm_name_input:
+    st.session_state.llm_name = llm_name_input
 
 def handle_ingest():
     docs_url = st.session_state.docs_url
@@ -71,11 +78,14 @@ def flush_docs():
     st.session_state.docs_ingested_values = None
 
 if st.button("Initialize App"):
-    st.session_state.llm = initialize_app(st.session_state.api_key, st.session_state.llm_name)
-    if st.session_state.llm:
-        st.success("App initialized successfully with the selected LLM and API Key.")
+    if st.session_state.api_key and st.session_state.llm_name:
+        st.session_state.llm = initialize_app(st.session_state.api_key, st.session_state.llm_name)
+        if st.session_state.llm:
+            st.success("App initialized successfully with the selected LLM and API Key.")
+        else:
+            st.error("Failed to initialize the app. Please check your API key and LLM name.")
     else:
-        st.error("Failed to initialize the app. Please check your API key and LLM name.")
+        st.error("Please provide both the API key and select the LLM provider.")
 
 if st.session_state.llm:
     if not st.session_state.docs_ingested:

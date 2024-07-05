@@ -2,7 +2,7 @@ import streamlit as st
 import time
 import os
 
-from graph.app import app
+from graph import app
 from ui.models import MODEL_MAP
 from graph.ingestion import ingest_docs
 import asyncio
@@ -105,11 +105,12 @@ if "spinner_disabled" not in st.session_state:
 st.session_state.llm_name = get_llm_name()
 st.session_state.api_key = get_provider_api_key()
 
+os.environ["LLM_NAME"] = st.session_state.llm_name
+os.environ["API_KEY"] = st.session_state.api_key
+
 if not st.session_state.llm_name or not st.session_state.api_key:
     st.success("👈 Please select the LLM provider/model type and insert associated API Key.")
 
-
- 
 if not st.session_state.docs_ingested:
     with st.form(key='docs_form'):
         col1, col2, col3 = st.columns(3, gap="medium")

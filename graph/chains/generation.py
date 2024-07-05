@@ -1,3 +1,4 @@
+import os
 from langchain_groq import ChatGroq
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.pydantic_v1 import BaseModel, Field
@@ -31,6 +32,9 @@ code_gen_prompt = ChatPromptTemplate.from_messages(
         ),
     ]
 )
+
+llm_name = os.environ.get("LLM_NAME")
+api_key = os.environ.get("API_KEY")
 
 llm = ChatGroq(model="llama3-70b-8192")
 

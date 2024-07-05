@@ -1,4 +1,4 @@
-from graph.state import GraphState
+from graph.entities import GraphState
 
 
 max_iterations = 3

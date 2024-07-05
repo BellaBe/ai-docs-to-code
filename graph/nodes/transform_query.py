@@ -1,5 +1,5 @@
 from typing import Any, Dict
-from graph.state import GraphState
+from graph.entities import GraphState
 from graph.chains.question_rewriter import question_rewriter
 
 

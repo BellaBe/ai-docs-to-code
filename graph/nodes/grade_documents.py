@@ -1,6 +1,6 @@
 from typing import Any, Dict
 
-from graph.state import GraphState
+from graph.entities import GraphState
 from graph.chains.retrieval_grader import retrieval_grader
 
 def grade_documents(state: GraphState) -> Dict[str, Any]:

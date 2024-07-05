@@ -10,8 +10,8 @@ from langchain_core.pydantic_v1 import BaseModel, Field
 
 from langgraph.graph import END, StateGraph
 from typing import List, TypedDict
-from graph.state import GraphState
-from graph.conditional_edges import decide_to_generate
+from graph.entities import GraphState
+from graph.edges import decide_to_generate
 from graph.nodes import transform_query, retrieve, grade_documents, websearch, generate
 
 workflow = StateGraph(GraphState)

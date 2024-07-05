@@ -3,7 +3,7 @@ from typing import Any, Dict
 from langchain.schema import Document
 from langchain_community.tools.ddg_search import DuckDuckGoSearchRun
 
-from graph.state import GraphState
+from graph.entities import GraphState
 
 web_search_tool = DuckDuckGoSearchRun(max_results=5)
 

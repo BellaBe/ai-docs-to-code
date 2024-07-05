@@ -118,7 +118,7 @@ if st.session_state.llm:
             context = st.session_state.docs_ingested_values[3]
             expertise_field = st.session_state.docs_ingested_values[0]
             state = GraphState(
-                context=context,
+                context="",
                 question=user_question,
                 field_of_expertise=expertise_field,
                 improved_question="",

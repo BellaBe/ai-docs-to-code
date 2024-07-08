@@ -1,6 +1,6 @@
 from typing import Any, Dict
 from graph.entities import GraphState
-from graph.chains.retriever import get_retriever
+from dal.document_database import get_retriever
 
 
 def retrieve(state: GraphState) -> Dict[str, Any]:
@@ -20,7 +20,7 @@ def retrieve(state: GraphState) -> Dict[str, Any]:
     llm_name = state["llm_name"]
     api_key = state["api_key"]
   
-    retriever = get_retriever(api_key, llm_name)
+    retriever = get_retriever()
 
     documents = retriever.invoke(question)
     

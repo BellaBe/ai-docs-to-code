@@ -3,3 +3,4 @@ graph.png
 __pycache__/
 *.pyc
 .venv
+.session.jsongit add

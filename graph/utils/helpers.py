@@ -1,5 +1,5 @@
 # Optional: Check for errors in case tool use is flaky
-def check_claude_output(tool_output):
+def check_output(tool_output):
     """Check for parse error or failure to call the tool"""
 
     # Error with parsing
@@ -19,29 +19,4 @@ def check_claude_output(tool_output):
             "You did not use the provided tool! Be sure to invoke the tool to structure the output."
         )
     return tool_output
-    
-    
-def insert_errors(inputs):
-    """Insert errors for tool parsing in the messages"""
-
-    # Get errors
-    error = inputs["error"]
-    messages = inputs["messages"]
-    messages += [
-        (
-            "assistant",
-            f"Retry. You are required to fix the parsing errors: {error} \n\n You must invoke the provided tool.",
-        )
-    ]
-    return {
-        "messages": messages,
-        "context": inputs["context"],
-    }
-
-
-def parse_output(solution):
-    """When we add 'include_raw=True' to structured output,
-    it will return a dict w 'raw', 'parsed', 'parsing_error'."""
-
-    return solution["parsed"]
    

@@ -2,22 +2,20 @@ from typing import Any, Dict
 from graph.entities import GraphState
 from graph.chains.question_rewriter import QuestionRewriterChain
 
-
-def transform_query(state: GraphState):
+def transform_question(state: GraphState) -> Dict[str, Any]:
     """
     Transforms original query of the user into a better query.
     
     Args:
-        state(dict): The current state of the graph.
+        state (GraphState): The current state of the graph.
     
     Returns:
-        state(dict): Filtered our irrelevant documents and updated web_search flag.
+        Dict[str, Any]: New key added to state, improved_question
     """
-    print("<----TRANSFORM QUERY----")
+    print("<----TRANSFORMING QUERY----")
     
     question = state["question"]
     field_of_expertise = state["field_of_expertise"]
-    
     api_key = state["api_key"]
     llm_name = state["llm_name"]
     
@@ -25,11 +23,8 @@ def transform_query(state: GraphState):
     
     result = question_rewriter.invoke({"question": question, "field_of_expertise": field_of_expertise})
     
+    state["improved_question"] = result
     
-    print("Improved Question: ", result)
+    print("----TRANSFORMING QUERY---->")
     
-    print("----TRANSFORM QUERY---->")
-    
-    return {"improved_question": result}
-    
-    
+    return state

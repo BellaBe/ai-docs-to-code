@@ -1,28 +1,44 @@
-def reflect(state: GraphState):
+from typing import Any, Dict
+
+from graph.entities import GraphState
+from graph.chains.reflector import ReflectorChain
+
+def reflect(state: GraphState) -> Dict[str, Any]:
     """
     Reflect on errors
 
     Args:
-        state (dict): The current graph state
+        state (GraphState): The current graph state
 
     Returns:
-        state (dict): New key added to state, generation
+        state (dict): New keys added to state, improved_question and reflection
     """
 
-    print("---GENERATING CODE SOLUTION---")
+    print("---REFLECTING ON ANSWERS---")
 
-    # State
-    messages = state["messages"]
-    iterations = state["iterations"]
+    question = state["improved_question"]
     code_solution = state["generation"]
-    context = state["context"]
-    expertise_field = state["expertise_field"]
+    is_answer_useful = state["is_answer_useful"]
+    answer_reasoning = state["answer_reasoning"]
+    expertise_field = state["field_of_expertise"]
+    api_key = state["api_key"]
+    llm_name = state["llm_name"]
+    
+    reflector = ReflectorChain(api_key, llm_name)
+    
+    result = reflector.invoke({
+        "question": question,
+        "improved_question": question,
+        "generation": code_solution,
+        "is_answer_useful": is_answer_useful,
+        "answer_reasoning": answer_reasoning,
+        "field_of_expertise": expertise_field
+    })
+    
+    print("RESULT REFLECT", result)
+    print("STATE", state)
 
-    # Prompt reflection
+    state["improved_question"] = result.improved_question
+    state["reflection"] = result.reflections
 
-    # Add reflection
-    reflections = code_gen_chain.invoke(
-        {"context": context, "messages": messages, "expertise_field": expertise_field}
-    )
-    messages += [("assistant", f"Here are reflections on the error: {reflections}")]
-    return {"generation": code_solution, "messages": messages, "iterations": iterations, "context": context, "expertise_field": expertise_field}
+    return state

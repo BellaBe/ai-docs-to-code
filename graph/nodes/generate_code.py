@@ -1,9 +1,8 @@
 from typing import Any, Dict
-
 from graph.entities import GraphState
-from graph.chains.generation import CodeGenerationChain
+from graph.chains.code_generator import CodeGenerationChain
 
-def generate(state: GraphState):
+def generate_code(state: GraphState) -> Dict[str, Any]:
     """
     Generate a code solution
 
@@ -13,7 +12,7 @@ def generate(state: GraphState):
     Returns:
         dict: New key added to state, generation
     """
-    print("---GENERATING CODE SOLUTION---")
+    print("<----GENERATING CODE SOLUTION----")
 
     context = state["context"]
     field_of_expertise = state["field_of_expertise"]
@@ -25,4 +24,8 @@ def generate(state: GraphState):
     code_solution = generation_chain.invoke(
         {"context": context, "question": state["improved_question"], "field_of_expertise": field_of_expertise}
     )
-    return {"generation": code_solution}
+    print("----GENERATING CODE SOLUTION---->")
+    
+    state["generation"] = code_solution
+    return state
+

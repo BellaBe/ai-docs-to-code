@@ -18,22 +18,30 @@ class CodeGenerationChain:
             [
                 (
                     "system",
-                    """You are a coding assistant with expertise in {field_of_expertise} \n 
-                    Here is a set of documentation:  
-                    \n ------- \n  
-                    {context} 
-                    \n ------- \n 
-                    Answer the user question based on the above provided documentation. 
+                    """
+                    You are a coding assistant with expertise in a specific field.
+                    """
+                ),
+                (
+                    "human",
+                    """
+                    Field of expertise: {field_of_expertise}
+                    Here is a set of documentation: {context}
+                    
+                    Answer the user question based on the provided documentation and your personal knowledge. 
+                    
                     Ensure any code you provide can be executed with all required imports and variables defined. 
-                    Structure your answer: 
+                    
+                    Structure your answer as follows: 
                     1) a prefix describing the code solution, 
                     2) the imports, 
-                    3) the functioning code block. \n
-                    Invoke the code tool to structure the output correctly.
-                    Here is the user question: {question}
+                    3) the functioning code block.
+                    
+                    User question: {question}
+                    
                     Answer:
-                    """,
-                ),
+                    """
+                )
             ]
         )
         self.chain = self.code_gen_prompt | self.llm.with_structured_output(Code)

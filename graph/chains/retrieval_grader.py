@@ -14,16 +14,21 @@ class RetrievalGraderChain:
                 (
                     "system",
                     """
-                    As an expert in {field_of_expertise}, your task is to assess the relevance of a retrieved document to a user question. Carefully analyze whether the document contains keywords or semantic meanings closely related to the user question. Consider the context, specificity, and direct relation to the question. Provide a binary score of 'yes' or 'no' to indicate whether the document is relevant to the question.
-
+                    You are a grader assessing the relevance of a retrieved document to a user question.
+                    """
+                ),
+                (
+                    "human",
+                    """
                     Retrieved document: {document}
-
                     User question: {question}
-
+                    
+                    If the document contains keyword(s) or semantic meaning related to the question, grade it as relevant. 
+                    Provide a binary score 'yes' or 'no' to indicate whether the document is relevant to the question.
+                    
                     Relevance score:
                     """
                 )
-
             ]
         )
         self.chain = self.grade_prompt | self.llm.with_structured_output(GradeDocuments)

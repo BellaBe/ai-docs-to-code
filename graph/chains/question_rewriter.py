@@ -13,13 +13,20 @@ class QuestionRewriterChain:
                 (
                     "system", 
                     """
-                        As an expert in {field_of_expertise}, your task is to improve input questions related to {field_of_expertise} topic for vector store search optimization. Analyze the input to understand the underlying semantic intent and meaning. Ensure the improved question is related to {field_of_expertise} topic, ensure the improved question is clear, concise, and semantically rich. Return only the improved question. Note: Do not provide any additional context or information.
-
-                        Original question: {question}
-
-                        Improved question:
+                    You are an expert in improving input questions related to a specific field for vector store search optimization.
                     """
-                    )
+                ),
+                (
+                    "human",
+                    """
+                    Field of expertise: {field_of_expertise}
+                    Original question: {question}
+                    
+                    Improve the question to ensure it is clear, concise, and semantically rich.
+                    
+                    Improved question:
+                    """
+                )
             ]
         )
         self.chain = self.re_write_prompt | self.llm | StrOutputParser()

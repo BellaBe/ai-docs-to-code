@@ -1,20 +1,19 @@
 from typing import Any, Dict
-
 from graph.entities import GraphState
 from graph.chains.retrieval_grader import RetrievalGraderChain
 
-def grade_documents(state: GraphState) -> Dict[str, Any]:
+def grade_knowledge(state: GraphState) -> Dict[str, Any]:
     """
     Determines whether the retrieved documents are relevant to the user question. If any document is not relevant, we will set a flag to run web search.
     
     Args:
-        state(dict): The current state of the graph.
+        state (GraphState): The current state of the graph.
     
     Returns:
-        state(dict): Filtered our irrelevant documents and updated web_search flag.
+        state (GraphState): Filtered our irrelevant documents and updated web_search flag.
     """
     
-    print("---GRADE DOCUMENTS---")
+    print("<----GRADING EXTRACTED KNOWLEDGE----")
     
     question = state["improved_question"]
     documents = state["context"]
@@ -23,7 +22,6 @@ def grade_documents(state: GraphState) -> Dict[str, Any]:
     llm_name = state["llm_name"]
     
     filtered_docs = []
-    web_search = False
     
     retrieval_grader = RetrievalGraderChain(api_key, llm_name)
     
@@ -36,13 +34,9 @@ def grade_documents(state: GraphState) -> Dict[str, Any]:
         
         grade = score.binary_score
         if grade == "yes":
-            print("---DOCUMENT IS RELEVANT---")
-            filtered_docs.append(d)
-        else:
-            print("---DOCUMENT IS NOT RELEVANT---")
-            print("NON-RELEVANT DOCUMENT: ", d.page_content)
-            web_search = True
-            continue
+            filtered_docs.append(d) 
     
+    state["context"] = filtered_docs
     
-    return {"context": filtered_docs, "web_search": web_search}
+    print("----GRADING EXTRACTED KNOWLEDGE---->")
+    return state

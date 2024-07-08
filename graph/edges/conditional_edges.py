@@ -7,32 +7,28 @@ max_iterations = 3
 flag = "do not reflect"
 
 
-def decide_to_finish(state: GraphState):
+def decide_to_finish(state: GraphState) -> str:
     """
     Determines whether to finish.
 
     Args:
-        state (dict): The current graph state
+        state (GraphState): The current graph state
 
     Returns:
         str: Next node to call
     """
-    error = state["error"]
-    iterations = state["iterations"]
+    error_messages = state.get("error_messages", "")
 
-    if error == "no" or iterations == max_iterations:
+    if error_messages == "":
         print("---DECISION: FINISH---")
         return "end"
-    else:
-        print("---DECISION: RE-TRY SOLUTION---")
-        if flag == "reflect":
-            return "reflect"
-        else:
-            return "generate"
-            
-def decide_to_generate(state: GraphState):
+
+    print("---DECISION: RE-TRY SOLUTION---")
+    return "reflect"
+        
+def decide_to_evaluate_code(state: GraphState):
     """
-    Determines whether to transform query, websearch or generate code.
+    Determines whether gathered context is enough to answer user's questions
 
     Args:
         state (dict): The current graph state
@@ -41,11 +37,13 @@ def decide_to_generate(state: GraphState):
         str: Next node to call
     """
     
-    web_search = state["web_search"]
-
-    if web_search == True:
-        print("---DECISION: WEBSEARCH---")
-        return "websearch"
-    else:
-        print("---DECISION: GENERATE---")
-        return "generate"
+    is_answer_useful = state["is_answer_useful"]
+    
+    if is_answer_useful == "yes":
+        print("---DECISION: EVALUATE CODE---")
+        return "evaluate_code"
+        
+    print("---DECISION: REFLECT---")
+    return "reflect"
+    
+    

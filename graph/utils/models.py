@@ -45,6 +45,7 @@ MODEL_MAP = {
     }
 }
 
+
 def load_LLM(api_key, llm_name):
     model_config = MODEL_MAP[llm_name]
     model_class = model_config["class"]
@@ -58,50 +59,3 @@ def load_LLM(api_key, llm_name):
 
     llm = model_class(**params)
     return llm
-
-
-
-def load_embeddings(api_key, llm_name):
-    model_config = MODEL_MAP[llm_name]
-    embedding_class = model_config["embedding_class"]
-    embedding_params = model_config["embedding_params"]
-
-    # Set the appropriate API key parameter
-    if "api_key" in embedding_params:
-        embedding_params["api_key"] = api_key
-
-    embeddings = embedding_class(**embedding_params)
-    return embeddings
-
-
-# MODEL_MAP = {
-#     "OpenAI GPT-3.5 Turbo": {
-#         "class": OpenAI,
-#         "params": {
-#             "temperature": 0,
-#             "api_key": os.getenv("OPENAI_API_KEY")  # Loaded from .env file
-#         },
-#     },
-#     "Groq LLaMA3 70b": {
-#         "class": ChatGroq,
-#         "params": {
-#             "model_name": "llama3-70b-8192",
-#             "groq_api_key": os.getenv("GROQ_API_KEY")  # Loaded from .env file
-#         },
-#     },
-#     "Groq Mixtral 8x7b": {
-#         "class": ChatGroq,
-#         "params": {
-#             "model_name": "mixtral-8x7b-32768",
-#             "groq_api_key": os.getenv("GROQ_API_KEY")  # Loaded from .env file
-#         },
-#     }
-# }
-
-# def load_LLM(llm_name):
-#     model_config = MODEL_MAP[llm_name]
-#     model_class = model_config["class"]
-#     params = model_config["params"]
-
-#     llm = model_class(**params)
-#     return llm

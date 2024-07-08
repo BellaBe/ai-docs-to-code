@@ -4,10 +4,6 @@ from langchain_community.embeddings.sentence_transformer import SentenceTransfor
 from langchain_community.document_loaders import RecursiveUrlLoader
 from langchain_chroma import Chroma
 from chromadb import PersistentClient
-import os
-from dotenv import load_dotenv
-
-load_dotenv()
 
 def ingest_docs(docs_url, max_depth):
     try:
@@ -64,22 +60,20 @@ def get_retriever():
         
 def delete_collection():
     try:
-        collection_name = os.environ.get("COLLECTION_NAME", "local-rag")
         chroma_client = PersistentClient(path=".chroma")
-        chroma_client.delete_collection(collection_name)
+        chroma_client.delete_collection("local-rag")
         print(f"Collection {collection_name} deleted successfully.")
     except Exception as e:
         raise Exception(f"Unable to delete collection: {e}")
         
 def check_collection_exists():
     try:
-        collection_name = os.environ.get("COLLECTION_NAME", "local-rag")
         persist_directory = ".chroma"
         chroma_client = PersistentClient(path=persist_directory)
         
         # Check if collection exists
         try:
-            chroma_client.get_collection(name=collection_name)
+            chroma_client.get_collection(name="local-rag")
             return True
         except ValueError:
             return False

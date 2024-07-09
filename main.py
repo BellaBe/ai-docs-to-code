@@ -4,7 +4,7 @@ import os
 import time
 import json
 from graph.entities import GraphState
-from graph.graph import app
+from graph.app import flow
 from dotenv import load_dotenv
 from dal.document_database import delete_collection, check_collection_exists, ingest_docs
 
@@ -13,7 +13,9 @@ load_dotenv()
 DATA_FILE = "session.json"
 
 def save_data_to_file(data):
+    print("Saving data to file")
     with open(DATA_FILE, 'w') as f:
+        print("DATA_FILE", DATA_FILE)
         json.dump(data, f)
 
 def load_data_from_file():

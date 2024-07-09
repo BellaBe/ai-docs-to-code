@@ -60,8 +60,9 @@ def get_retriever():
         
 def delete_collection():
     try:
+        collection_name = "local-rag"
         chroma_client = PersistentClient(path=".chroma")
-        chroma_client.delete_collection("local-rag")
+        chroma_client.delete_collection(collection_name)
         print(f"Collection {collection_name} deleted successfully.")
     except Exception as e:
         raise Exception(f"Unable to delete collection: {e}")

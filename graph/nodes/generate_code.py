@@ -33,8 +33,6 @@ def generate_code(state: GraphState) -> GraphState:
 
     # Invoke the CodeGenerationChain
     code_solution = generation_chain.invoke(input_data)
-    
-    print("Generated code solution: =======", code_solution)
 
     # Update the state with the generated solution
     state["solution"] = code_solution

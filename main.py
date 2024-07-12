@@ -215,7 +215,7 @@ with st.container():
                     static_analysis_results = result["static_analysis_results"]
                     st.error(f"During code evaluation, the following errors occured: {errors}")
                     st.warning(f"Here are static analysis results: {static_analysis_results}")
-                    st.info(f"Number of iterations: {iterations}")
+                    st.info(f"Number of performed iterations: {iterations}")
                     
                     initial_text, code_block, final_text = extract_components(solution)
                     

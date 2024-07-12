@@ -57,7 +57,7 @@ Ask Questions: Enter your query and let the application generate code solutions 
 
 
 For a detailed tutorial on how to build this application, check out our Medium article:
-[Building a Docs-to-Code RAG Application](https://github.com/BellaBe/ai-docs-to-code)
+[Building a Docs-to-Code RAG Application](https://medium.com/langchain-0-2-insights/langchain-0-2-insights-build-docs-to-code-tool-with-langchain-langgraph-and-streamlit-193ed717c2f8)
 
 Contributing
 Contributions are welcome! Please feel free to submit a Pull Request.

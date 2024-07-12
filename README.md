@@ -47,3 +47,20 @@ To start the application, run the following command:
 ```sh
 streamlit run main.py
 ```
+
+This will start the Streamlit server and open the application in your default web browser.
+
+Usage
+Set the Model and API Key: Enter the necessary details to configure the model.
+Ingest Documentation: Provide the URL and other details of the documentation to be ingested.
+Ask Questions: Enter your query and let the application generate code solutions based on the ingested documentation.
+
+
+For a detailed tutorial on how to build this application, check out our Medium article:
+[Building a Docs-to-Code RAG Application](https://github.com/BellaBe/ai-docs-to-code)
+
+Contributing
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+License
+This project is licensed under the MIT License.

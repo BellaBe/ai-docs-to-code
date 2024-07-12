@@ -2,7 +2,7 @@ from typing import Any, Dict
 from graph.entities import GraphState
 from dal.document_database import get_retriever
 
-def retrieve_knowledge(state: GraphState) -> Dict[str, Any]:
+def retrieve_knowledge(state: GraphState) -> GraphState:
     """
     Retrieve documents based on the state of the graph.
     
@@ -10,7 +10,7 @@ def retrieve_knowledge(state: GraphState) -> Dict[str, Any]:
         state (GraphState): The current state of the graph.
         
     Returns:
-        Dict[str, Any]: New key added to state, context (retrieved documents)
+        state (GraphState): New key added to state, context (retrieved documents)
     """
     
     print("<----RETRIEVING KNOWLEDGE----")

@@ -2,7 +2,7 @@ from typing import Any, Dict
 from graph.entities import GraphState
 from graph.chains.question_rewriter import QuestionRewriterChain
 
-def transform_question(state: GraphState) -> Dict[str, Any]:
+def transform_question(state: GraphState) -> GraphState:
     """
     Transforms original query of the user into a better query.
     
@@ -10,7 +10,7 @@ def transform_question(state: GraphState) -> Dict[str, Any]:
         state (GraphState): The current state of the graph.
     
     Returns:
-        Dict[str, Any]: New key added to state, improved_question
+        state (GraphState): New key added to state, improved_question
     """
     print("<----TRANSFORMING QUERY----")
     
@@ -21,9 +21,13 @@ def transform_question(state: GraphState) -> Dict[str, Any]:
     
     question_rewriter = QuestionRewriterChain(api_key, llm_name)
     
-    result = question_rewriter.invoke({"question": question, "field_of_expertise": field_of_expertise})
+    result = question_rewriter.invoke({
+        "question": question, 
+        "field_of_expertise": field_of_expertise
+        })
     
-    state["improved_question"] = result
+    state["improved_question"] = result.improved_question
+    state["reasoning_for_improved_question"] = result.reasoning
     
     print("----TRANSFORMING QUERY---->")
     

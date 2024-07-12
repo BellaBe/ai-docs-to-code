@@ -1,8 +1,8 @@
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.pydantic_v1 import BaseModel, Field
+from langchain.schema.output_parser import StrOutputParser
 
 from graph.utils import load_LLM
-from graph.entities.models import Code
 
 
 class CodeGenerationChain:
@@ -13,32 +13,27 @@ class CodeGenerationChain:
                 (
                     "system",
                     """
-                    You are a coding assistant with expertise in a specific field.
+                    You are a coding assistant with expertise in {field_of_expertise}. You will be provided with a set of 
+                    latest documentation relative to {field_of_expertise} and user's question. Your task is to generate a 
+                    code solution to answer the user's question based on the provided latest documentation and your personal 
+                    knowledge. Latest  documentation should prevail over your personal knowledge.
+                    Ensure your solution is comprehensive and addresses the user's question in detail. Ensure any code you 
+                    provided in the solution can be executed with all required imports and variables defined. Ensure the code 
+                    is functional and complete. Your response should contain explanation and code block, nothing else. Ensure to surround code black with backticks.
                     """
                 ),
                 (
                     "human",
                     """
-                    Field of expertise: {field_of_expertise}
-                    Here is a set of documentation: {context}
-                    
-                    Answer the user question based on the provided documentation and your personal knowledge. 
-                    
-                    Ensure any code you provide can be executed with all required imports and variables defined. 
-                    
-                    Structure your answer as follows: 
-                    1) a prefix describing the code solution, 
-                    2) the imports, 
-                    3) the functioning code block.
-                    
+                    Documentation: {context}
                     User question: {question}
                     
-                    Answer:
+                    Code solution:
                     """
                 )
             ]
         )
-        self.chain = self.code_gen_prompt | self.llm.with_structured_output(Code)
+        self.chain = self.code_gen_prompt | self.llm | StrOutputParser()
 
     def invoke(self, input_data):
         return self.chain.invoke(input_data)

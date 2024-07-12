@@ -2,8 +2,10 @@
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.pydantic_v1 import BaseModel, Field
+from langchain_openai import ChatOpenAI
 
 from graph.utils import load_LLM
+from graph.entities.models import QuestionRewriter
 
     
 class QuestionRewriterChain:
@@ -14,23 +16,24 @@ class QuestionRewriterChain:
                 (
                     "system", 
                     """
-                    You are an expert in improving input questions related to a specific field for vector store search optimization.
+                    You are an expert in optimizing input questions related to {field_of_expertise} for vector 
+                    store similarity search. Your task is to rewrite the user question to improve the search results.
                     """
                 ),
                 (
                     "human",
                     """
-                    Field of expertise: {field_of_expertise}
-                    Original question: {question}
+                    User question: {question}
                     
-                    Improve the question to ensure it is clear, concise, and semantically rich.
+                    Use QuestionRewriter tool to generate your output.
                     
-                    Improved question:
+                    QuestionRewriter:
                     """
                 )
             ]
         )
-        self.chain = self.re_write_prompt | self.llm | StrOutputParser()
-    
+
+        self.chain = self.re_write_prompt | self.llm.with_structured_output(QuestionRewriter)
+
     def invoke(self, input_data):
-        return self.chain.invoke(input_data)
+        return self.chain.invoke(input_data)    

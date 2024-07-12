@@ -1,6 +1,6 @@
 import os
 from dotenv import load_dotenv
-from langchain_openai import OpenAI
+from langchain_openai import ChatOpenAI
 from langchain_groq import ChatGroq
 from langchain_openai import OpenAIEmbeddings
 from langchain_huggingface import HuggingFaceEmbeddings
@@ -11,7 +11,7 @@ load_dotenv()
 
 MODEL_MAP = {
     "OpenAI GPT-3.5 Turbo": {
-        "class": OpenAI,
+        "class": ChatOpenAI,
         "params": {
             "temperature": 0,
             "api_key": None  # To be set dynamically

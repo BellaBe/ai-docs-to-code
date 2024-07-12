@@ -14,7 +14,6 @@ def ingest_docs(docs_url, max_depth):
             max_depth=max_depth,
             extractor=lambda x: Soup(x, "html.parser").text
         )
-
         docs = loader.load()
         for doc in docs:
             if doc.metadata.get("language") is None:
@@ -27,7 +26,6 @@ def ingest_docs(docs_url, max_depth):
         
         Chroma.from_documents(documents=doc_splits, embedding=embedding_function, collection_name="local-rag", persist_directory=".chroma")
         
-        print("Docs ingested successfully")
         return 
 
     except Exception as e:
@@ -38,13 +36,10 @@ def get_retriever():
     try:
         embedding_function = SentenceTransformerEmbeddings(model_name="all-MiniLM-L6-v2")
 
-        # Initialize PersistentClient
         chroma_client = PersistentClient(path=".chroma/")
         
-        # Ensure collection exists
         collection = chroma_client.get_or_create_collection(name="local-rag")
         
-        # Initialize Chroma with the PersistentClient
         chroma_instance = Chroma(
             collection_name="local-rag",
             embedding_function=embedding_function,
@@ -52,7 +47,6 @@ def get_retriever():
             client=chroma_client
         )
         
-        # Get the retriever
         retriever = chroma_instance.as_retriever()
         return retriever
     except Exception as e:
@@ -71,8 +65,6 @@ def check_collection_exists():
     try:
         persist_directory = ".chroma"
         chroma_client = PersistentClient(path=persist_directory)
-        
-        # Check if collection exists
         try:
             chroma_client.get_collection(name="local-rag")
             return True
@@ -80,6 +72,3 @@ def check_collection_exists():
             return False
     except Exception as e:
         raise Exception(f"Unable to check collection existence: {e}")
-        
-        
-

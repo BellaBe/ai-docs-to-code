@@ -12,10 +12,37 @@ load_dotenv()
 
 DATA_FILE = "session.json"
 
+import re
+from typing import Tuple
+
+def extract_components(text: str) -> Tuple[str, str, str]:
+    """
+    Extract the initial text, code block, and final text from a given string.
+    
+    Args:
+        text (str): The text containing a code block enclosed in triple backticks.
+    
+    Returns:
+        Tuple[str, str, str]: A tuple containing the initial text, the code block, and the final text.
+    """
+    # Regular expression pattern to match the initial text, code block, and final text
+    pattern = re.compile(r"(.*?)(```[\s\S]*?```)(.*)", re.DOTALL)
+    
+    # Find all matches in the text
+    match = pattern.search(text)
+    
+    # If a match is found, extract the components
+    if match:
+        initial_text = match.group(1).strip()
+        code_block = match.group(2).strip()
+        final_text = match.group(3).strip()
+        return initial_text, code_block, final_text
+    else:
+        # If no match is found, return the text as initial text with empty code and final text
+        return "", text.strip(), ""
+
 def save_data_to_file(data):
-    print("Saving data to file")
     with open(DATA_FILE, 'w') as f:
-        print("DATA_FILE", DATA_FILE)
         json.dump(data, f)
 
 def load_data_from_file():
@@ -28,7 +55,7 @@ def delete_data_file():
     if os.path.exists(DATA_FILE):
         os.remove(DATA_FILE)
 
-def handle_submit_docs():
+def handle_ingest_docs():
     with st.spinner("Ingesting docs..."):
         try:
             ingest_docs(docs_url=st.session_state.docs_url_input, max_depth=st.session_state.max_depth_input)
@@ -59,6 +86,13 @@ def handle_delete_collection():
             st.success("Collection deleted successfully.")
         except Exception as e:
             st.error(f"Failed to delete collection: {e}")
+            
+            
+def mask_api_key(api_key):
+    if len(api_key) > 6:
+        return f"{api_key[:5]}{'*' * (len(api_key) - 35)}{api_key[-4:]}"
+    else:
+        return api_key
 
 def handle_change_model():
     st.session_state.model_set = False
@@ -129,7 +163,7 @@ if not st.session_state.model_set:
 else:
     with st.expander("Model details"):
         st.text(f"Model name: {st.session_state.loaded_model_values[0]}")
-        st.text(f"API key: {st.session_state.loaded_model_values[1]}")
+        st.text(f"API key: {mask_api_key(st.session_state.loaded_model_values[1])}")
         if st.button("Change Model", on_click=handle_change_model):
             st.success("Model settings cleared. Please set the model again.")
 
@@ -144,7 +178,7 @@ if not st.session_state.docs_ingested:
         with col3:
             st.number_input("Max depth for web search", min_value=1, value=st.session_state.max_depth, key="max_depth_input")
         with col4:
-            st.form_submit_button('Ingest docs', on_click=handle_submit_docs)
+            st.form_submit_button('Ingest docs', on_click=handle_ingest_docs)
 else:
     with st.expander("Ingested docs details"):
         st.text(f"Field of expertise: {st.session_state.ingested_docs_values[0]}")
@@ -158,25 +192,40 @@ with st.container():
         user_question = st.text_area("Enter your question here", placeholder="Ex: How to create a sidebar", disabled=not st.session_state.docs_ingested)
         if st.form_submit_button("Generate code", disabled=not st.session_state.docs_ingested or not st.session_state.model_set):
             state = GraphState(
-                context="",
                 question=user_question,
+                improved_question=None,
+                reasoning_for_improved_question=None,
                 field_of_expertise=st.session_state.ingested_docs_values[0],
-                improved_question="",
+                context=[],
+                solution=None,
+                errors = [],
+                iterations=1,
                 llm_name=st.session_state.loaded_model_values[0],
                 api_key=st.session_state.loaded_model_values[1],
-                error=False,
-                messages="",
-                generation="",
-                iterations=0,
-                web_search=False
             )
 
             try:
                 with st.spinner("Generating code..."):
-                    solution = app.invoke(state)
-                    st.write(solution["generation"].prefix)
-                    imports = solution["generation"].imports
-                    code = solution["generation"].code
-                    st.code(code, language="python")
+                    result = flow.invoke(state)
+                    st.write(f"Original question: {result['question']}")
+                    st.write(f"LLM improved question: {result['improved_question']}")
+                    solution = result.get("solution")
+                    errors = result["errors"]
+                    iterations = result["iterations"]
+                    static_analysis_results = result["static_analysis_results"]
+                    st.error(f"During code evaluation, the following errors occured: {errors}")
+                    st.warning(f"Here are static analysis results: {static_analysis_results}")
+                    st.info(f"Number of iterations: {iterations}")
+                    
+                    initial_text, code_block, final_text = extract_components(solution)
+                    
+                    if initial_text is not "":
+                        st.success(initial_text)
+                        
+                    st.code(code_block, language="python")
+                    
+                    if final_text is not "":
+                        st.success(final_text)
+                             
             except Exception as e:
                 st.error(f"Failed to generate code. Error: {e}")

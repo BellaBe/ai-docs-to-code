@@ -219,12 +219,12 @@ with st.container():
                     
                     initial_text, code_block, final_text = extract_components(solution)
                     
-                    if initial_text is not "":
+                    if initial_text != "":
                         st.success(initial_text)
                         
                     st.code(code_block, language="python")
                     
-                    if final_text is not "":
+                    if final_text != "":
                         st.success(final_text)
                              
             except Exception as e:

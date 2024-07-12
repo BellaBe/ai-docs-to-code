@@ -33,4 +33,4 @@ workflow.add_conditional_edges("evaluate_code", decide_to_finish, {
 
 flow = workflow.compile()
 
-#flow.get_graph().draw_mermaid_png(output_file_path="graph.png")
+flow.get_graph().draw_mermaid_png(output_file_path="graph.png")
